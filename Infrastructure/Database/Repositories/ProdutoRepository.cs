@@ -16,10 +16,10 @@ namespace Infrastructure.Database.Repositories
             _produtos = _dbContext.Set<Produto>();
         }
 
-        public Task<Produto> Add(Produto produto)
+        public async Task<Produto> AddAsync(Produto produto, CancellationToken cancellationToken = default)
         {
-            _produtos.Add(produto);
-            return Task.FromResult(produto);
+            await _produtos.AddAsync(produto, cancellationToken);
+            return produto;
         }
 
         public Task<Produto> Update(Produto produto)

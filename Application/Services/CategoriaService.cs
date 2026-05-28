@@ -33,7 +33,7 @@ namespace Application.Services
             {
                 var categoria = _mapper.Map<Categoria>(request);
 
-                var created = _categoriaRepository.Add(categoria);
+                var created = await _categoriaRepository.AddAsync(categoria, cancellationToken);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 

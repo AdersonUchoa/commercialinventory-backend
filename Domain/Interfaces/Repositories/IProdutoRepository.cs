@@ -4,7 +4,7 @@ namespace Domain.Interfaces.Repositories
 {
     public interface IProdutoRepository
     {
-        Task<Produto> Add(Produto produto);
+        Task<Produto> AddAsync(Produto produto, CancellationToken cancellationToken = default);
         Task<Produto> Update(Produto produto);
         Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
         Task<Produto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);

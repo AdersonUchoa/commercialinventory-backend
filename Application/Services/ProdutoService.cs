@@ -38,7 +38,7 @@ namespace Application.Services
 
                 var produto = _mapper.Map<Produto>(request);
 
-                var created = _produtoRepository.Add(produto);
+                var created = await _produtoRepository.AddAsync(produto);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -59,9 +59,12 @@ namespace Application.Services
             {
                 var produto = await _produtoRepository.GetByIdAsync(id, cancellationToken);
                 if (produto == null) return new ApiResponse<ProdutoResponse>(false, HttpStatusCode.NotFound, null, "Produto não encontrado.", null);
-
-                var categoria = await _categoriaRepository.ExistsAsync(request.CategoriaId, cancellationToken);
-                if (!categoria) return new ApiResponse<ProdutoResponse>(false, HttpStatusCode.BadRequest, null, "Categoria informada não existe.", null);
+                
+                if(request.CategoriaId is not null)
+                {
+                    var categoria = await _categoriaRepository.ExistsAsync(request.CategoriaId, cancellationToken);
+                    if (!categoria) return new ApiResponse<ProdutoResponse>(false, HttpStatusCode.BadRequest, null, "Categoria informada não existe.", null);
+                }
 
                 produto.Update(request.Nome, request.Descricao, request.Preco, request.CategoriaId);
 

@@ -16,10 +16,10 @@ namespace Infrastructure.Database.Repositories
             _categorias = _context.Set<Categoria>();
         }
 
-        public Task<Categoria> Add(Categoria categoria)
+        public async Task<Categoria> AddAsync(Categoria categoria, CancellationToken cancellationToken = default)
         {
-            _categorias.Add(categoria);
-            return Task.FromResult(categoria);
+            await _categorias.AddAsync(categoria, cancellationToken);
+            return categoria;
         }
 
         public Task<Categoria> Update(Categoria categoria)
