@@ -38,7 +38,7 @@ namespace Application.Services
 
                 var produto = _mapper.Map<Produto>(request);
 
-                var created = await _produtoRepository.AddAsync(produto);
+                var created = await _produtoRepository.AddAsync(produto, cancellationToken);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 

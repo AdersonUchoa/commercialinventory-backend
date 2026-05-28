@@ -1,4 +1,5 @@
 using Asp.Versioning.ApiExplorer;
+using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.IoC;
 
@@ -43,12 +44,12 @@ if(app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
+    var logger = services.GetRequiredService<ILogger<CommercialInventoryDbContext>>();
     try
     {
         logger.LogInformation("Verificando e aplicando Migrations pendentes no banco de dados.");
 
-        var context = services.GetRequiredService<Infrastructure.Context.CommercialInventoryDbContext>();
+        var context = services.GetRequiredService<CommercialInventoryDbContext>();
         context.Database.Migrate();
 
         logger.LogInformation("Migrations aplicadas com sucesso.");
