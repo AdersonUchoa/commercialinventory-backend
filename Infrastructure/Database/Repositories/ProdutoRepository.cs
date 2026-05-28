@@ -16,24 +16,25 @@ namespace Infrastructure.Database.Repositories
             _produtos = _dbContext.Set<Produto>();
         }
 
-        public async Task<Produto> AddAsync(Produto Produto, CancellationToken cancellationToken = default)
+        public Task<Produto> Add(Produto produto)
         {
-            await _produtos.AddAsync(Produto, cancellationToken);
-            return Produto;
+            _produtos.Add(produto);
+            return Task.FromResult(produto);
         }
 
-        public Task<Produto> UpdateAsync(Produto Produto)
+        public Task<Produto> Update(Produto produto)
         {
-            _produtos.Update(Produto);
-            return Task.FromResult(Produto);
+            _produtos.Update(produto);
+            return Task.FromResult(produto);
         }
 
         public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
-            var Produto = await _produtos.FindAsync([id], cancellationToken);
-            if (Produto == null) return false;
-            _produtos.Remove(Produto);
-            return true;
+            var deleted = await _produtos
+                .Where(p => p.Id == id)
+                .ExecuteDeleteAsync(cancellationToken);
+
+            return deleted > 0;
         }
 
         public async Task<Produto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -52,16 +53,23 @@ namespace Infrastructure.Database.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
-        public IQueryable<Produto> GetAllAsync(string? search = null)
+        public async Task<(IReadOnlyList<Produto> produtos, int total)> GetAllAsync(int pageIndex, int pageSize, string? searchName = null, CancellationToken cancellationToken = default)
         {
-            var query = _produtos.AsQueryable().AsNoTracking();
+            var query = _produtos.AsNoTracking();
 
-            if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(c => c.Nome.Contains(search));
+            if (!string.IsNullOrWhiteSpace(searchName))
+                query = query.Where(c => c.Nome.Contains(searchName));
 
-            return query
+            var count = await query.CountAsync(cancellationToken);
+
+            var produtos = await query
                 .Include(p => p.Categoria)
-                .OrderByDescending(c => c.Id);
+                .OrderByDescending(p => p.Id)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return (produtos, count);
         }
     }
 }

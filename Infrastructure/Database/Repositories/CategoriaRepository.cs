@@ -16,13 +16,13 @@ namespace Infrastructure.Database.Repositories
             _categorias = _context.Set<Categoria>();
         }
 
-        public async Task<Categoria> AddAsync(Categoria categoria, CancellationToken cancellationToken = default)
+        public Task<Categoria> Add(Categoria categoria)
         {
-            await _categorias.AddAsync(categoria, cancellationToken);
-            return categoria;
+            _categorias.Add(categoria);
+            return Task.FromResult(categoria);
         }
 
-        public Task<Categoria> UpdateAsync(Categoria categoria)
+        public Task<Categoria> Update(Categoria categoria)
         {
             _categorias.Update(categoria);
             return Task.FromResult(categoria);
@@ -30,10 +30,11 @@ namespace Infrastructure.Database.Repositories
 
         public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
-            var categoria = await _categorias.FindAsync([id], cancellationToken);
-            if (categoria == null) return false;
-            _categorias.Remove(categoria);
-            return true;
+            var deleted = await _categorias
+                .Where(c => c.Id == id)
+                .ExecuteDeleteAsync(cancellationToken);
+
+            return deleted > 0;
         }
 
         public async Task<Categoria?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -52,14 +53,32 @@ namespace Infrastructure.Database.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
-        public IQueryable<Categoria> GetAllAsync(string? search = null)
+        public async Task<(IReadOnlyList<Categoria> categorias, int total)> GetAllAsync(int pageIndex, int pageSize, string? searchName = null, CancellationToken cancellationToken = default)
         {
-            var query = _categorias.AsQueryable().AsNoTracking();
+            var query = _categorias.AsNoTracking();
 
-            if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(c => c.Nome.Contains(search));
+            if (!string.IsNullOrWhiteSpace(searchName))
+                query = query.Where(c => c.Nome.Contains(searchName));
 
-            return query.OrderByDescending(c => c.Id);
+            var count = await query.CountAsync(cancellationToken);
+
+            var categorias = await query
+                .OrderByDescending(c => c.Id)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return (categorias, count);
+        }
+
+        public async Task<bool> ExistsAsync(int? id, CancellationToken cancellationToken = default)
+        {
+            return await _categorias.AnyAsync(c => c.Id == id, cancellationToken);
+        }
+
+        public async Task<bool> HasProductsAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _categorias.AnyAsync(c => c.Id == id && c.Produtos.Any(), cancellationToken);
         }
     }
 }

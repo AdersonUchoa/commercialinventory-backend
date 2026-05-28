@@ -11,9 +11,10 @@
 
         public Produto() { }
 
-        public void Update(string? novoNome, decimal? novoPreco, int? novaCategoriaId)
+        public void Update(string? novoNome, string? novaDescriaco, decimal? novoPreco, int? novaCategoriaId)
         {
             Nome = novoNome ?? Nome;
+            Descricao = novaDescriaco ?? Descricao;
             Preco = novoPreco ?? Preco;
             CategoriaId = novaCategoriaId ?? CategoriaId;
         }

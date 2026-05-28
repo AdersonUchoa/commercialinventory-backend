@@ -1,4 +1,8 @@
-﻿namespace WebAPI.IoC
+﻿using Application.Interfaces;
+using Application.Mappers.Profiles;
+using Application.Services;
+
+namespace WebAPI.IoC
 {
     public static class ApplicationDependencyInjection
     {
@@ -9,13 +13,13 @@
         }
         private static void AddServices(IServiceCollection services)
         {
-            //TODO services.AddScoped para Categoria e Produto
+            services.AddScoped<ICategoriaService, CategoriaService>();
+            services.AddScoped<IProdutoService, ProdutoService>();
         }
 
         private static void AddAutoMapper(IServiceCollection services)
         {
-            //TODO: Para Profile caso necessario das entidades Categoria e Produto
-            //services.AddAutoMapper(cfg => cfg.AddMaps(typeof(PessoaProfile).Assembly));
+            services.AddAutoMapper(cfg => cfg.AddMaps(typeof(CategoriaProfile).Assembly));
         }
 
     }

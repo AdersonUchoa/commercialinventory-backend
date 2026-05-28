@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Application.Pagination
+﻿namespace Application.Pagination
 {
     public class PaginatedResult<T> where T : class
     {
@@ -12,25 +10,13 @@ namespace Application.Pagination
         public bool HasPreviousPage => PageIndex > 1;
         public bool HasNextPage => PageIndex < TotalPages;
 
-        public PaginatedResult(List<T> items, int count, int pageIndex, int pageSize)
+        public PaginatedResult(IReadOnlyList<T> items, int count, int pageIndex, int pageSize)
         {
             TotalCount = count;
             PageSize = pageSize;
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             Items = items;
-        }
-
-        public static async Task<PaginatedResult<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
-        {
-            var count = await source.CountAsync();
-
-            var items = await source
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return new PaginatedResult<T>(items, count, pageIndex, pageSize);
         }
     }
 }

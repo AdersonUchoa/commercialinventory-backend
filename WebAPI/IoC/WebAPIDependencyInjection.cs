@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Application.Responses;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 
 namespace WebAPI.IoC
 {
@@ -70,6 +72,23 @@ namespace WebAPI.IoC
         private static void AddControllers(IServiceCollection services)
         {
             services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errors = context.ModelState
+                        .Where(m => m.Value != null && m.Value.Errors.Any())
+                        .SelectMany(m => m.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                        var summary = string.Join(" | ", errors);
+
+                        var response = new ApiResponse<object>(false, System.Net.HttpStatusCode.BadRequest, null, "A requisição possui dados inválidos.", summary);
+
+                        return new BadRequestObjectResult(response);
+                    };
+                })
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
