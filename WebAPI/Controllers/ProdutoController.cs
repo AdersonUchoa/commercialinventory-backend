@@ -1,10 +1,12 @@
 ﻿using Application.Interfaces;
 using Application.Requests.Produto;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/v1/produtos")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/produtos")]
     public class ProdutoController : BaseController
     {
         private readonly IProdutoService _produtoService;

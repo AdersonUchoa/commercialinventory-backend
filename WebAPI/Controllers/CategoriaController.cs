@@ -1,10 +1,12 @@
 ﻿using Application.Interfaces;
 using Application.Requests.Categoria;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/v1/categorias")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/categorias")]
     public class CategoriaController : BaseController
     {
         private readonly ICategoriaService _categoriaService;

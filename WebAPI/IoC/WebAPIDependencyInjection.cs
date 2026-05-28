@@ -1,4 +1,5 @@
 ﻿using Application.Responses;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
@@ -6,11 +7,27 @@ namespace WebAPI.IoC
 {
     public static class WebAPIDependencyInjection
     {
-        public static void AddWebApi(this IServiceCollection services, IConfiguration configuration)
+        public static void AddWebApi(this IServiceCollection services)
         {
+            AddApiVersioning(services);
             AddSwagger(services);
             AddCors(services);
             AddControllers(services);
+        }
+
+        private static void AddApiVersioning(IServiceCollection services)
+        {
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+            })
+            .AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
         }
 
         private static void AddSwagger(IServiceCollection services)

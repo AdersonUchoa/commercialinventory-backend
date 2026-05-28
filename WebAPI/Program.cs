@@ -1,3 +1,5 @@
+using Asp.Versioning.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using WebAPI.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddDomain();
-builder.Services.AddWebApi(builder.Configuration);
+builder.Services.AddWebApi();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -16,9 +18,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+    
+    var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "CommercialInventory API v1");
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"CommercialInventory API {description.GroupName.ToUpperInvariant()}");
+        }
         c.RoutePrefix = "swagger";
     });
 }
@@ -30,5 +38,25 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+if(app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        logger.LogInformation("Verificando e aplicando Migrations pendentes no banco de dados.");
+
+        var context = services.GetRequiredService<Infrastructure.Context.CommercialInventoryDbContext>();
+        context.Database.Migrate();
+
+        logger.LogInformation("Migrations aplicadas com sucesso.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Ocorreu um erro ao tentar aplicar as migrations.");
+    }
+}
 
 app.Run();

@@ -24,4 +24,4 @@ services:
       - ConnectionStrings__DefaultConnection=Server=db;Database=commercialinventorydb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
 
 volumes:
-  pgdata:
+  sqldata:
