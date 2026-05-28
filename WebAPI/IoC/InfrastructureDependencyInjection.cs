@@ -1,4 +1,6 @@
-﻿using Infrastructure.Context;
+﻿using Domain.Interfaces.Repositories;
+using Infrastructure.Context;
+using Infrastructure.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI.IoC
@@ -22,8 +24,8 @@ namespace WebAPI.IoC
 
         private static void AddRepositories(IServiceCollection services)
         {
-            //services.AddScoped<ICategoriaRepository, CategoriaRepository>();
-            //services.AddScoped<IProdutoRepository, ProdutoRepository>();
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            services.AddScoped<IProdutoRepository, ProdutoRepository>();
         }
     }
 }
