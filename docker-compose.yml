@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: commercialinventory-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - "sqldata:/var/opt/mssql"
+  
+  api:
+    build:
+      context: .
+    container_name: commercialinventory-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Database=commercialinventorydb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
+
+volumes:
+  pgdata:
