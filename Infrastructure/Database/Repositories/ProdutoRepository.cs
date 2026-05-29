@@ -53,12 +53,15 @@ namespace Infrastructure.Database.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
-        public async Task<(IReadOnlyList<Produto> produtos, int total)> GetAllAsync(int pageIndex, int pageSize, string? searchName = null, CancellationToken cancellationToken = default)
+        public async Task<(IReadOnlyList<Produto> produtos, int total)> GetAllAsync(int pageIndex, int pageSize, string? searchName = null, int? categoriaId = null, CancellationToken cancellationToken = default)
         {
             var query = _produtos.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(searchName))
-                query = query.Where(c => c.Nome.Contains(searchName));
+                query = query.Where(p => p.Nome.Contains(searchName));
+
+            if(categoriaId.HasValue)
+                query = query.Where(p => p.CategoriaId == categoriaId.Value);
 
             var count = await query.CountAsync(cancellationToken);
 

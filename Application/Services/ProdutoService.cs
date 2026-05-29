@@ -122,7 +122,7 @@ namespace Application.Services
                 if (!string.IsNullOrWhiteSpace(request.SearchName))
                     request.SearchName = request.SearchName.Trim();
 
-                var (produtos, total) = await _produtoRepository.GetAllAsync(request.Page, request.Limit, request.SearchName, cancellationToken);
+                var (produtos, total) = await _produtoRepository.GetAllAsync(request.Page, request.Limit, request.SearchName, request.CategoriaId, cancellationToken);
 
                 var response = _mapper.Map<IReadOnlyList<ProdutoResponse>>(produtos);
                 

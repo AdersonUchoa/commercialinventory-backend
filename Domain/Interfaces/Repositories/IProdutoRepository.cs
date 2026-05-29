@@ -9,6 +9,6 @@ namespace Domain.Interfaces.Repositories
         Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
         Task<Produto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<Produto?> GetByIdNoTrackingAsync(int id, CancellationToken cancellationToken = default);
-        Task<(IReadOnlyList<Produto> produtos, int total)> GetAllAsync(int pageIndex, int pageSize, string? searchName = null, CancellationToken cancellationToken = default);
+        Task<(IReadOnlyList<Produto> produtos, int total)> GetAllAsync(int pageIndex, int pageSize, string? searchName = null, int? categoriaId = null, CancellationToken cancellationToken = default);
     }
 }
