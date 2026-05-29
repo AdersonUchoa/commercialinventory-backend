@@ -6,7 +6,7 @@ namespace Application.Responses.Produto
         int Id,
         string Nome,
         string Descricao,
-        string Preco,
+        int Preco,
         CategoriaResponse Categoria
     );
 }
