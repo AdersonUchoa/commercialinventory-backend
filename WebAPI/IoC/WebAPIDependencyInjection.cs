@@ -79,9 +79,9 @@ namespace WebAPI.IoC
             {
                 options.AddPolicy("CommercialInventoryCors", builder =>
                 {
-                    builder.AllowAnyOrigin() // Configurar CORS melhor depois. Não usar AllowAnyOrigin em produção.
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:8000")
+                           .WithMethods("GET", "POST", "PUT", "DELETE")
+                           .WithHeaders("Content-Type", "Authorization");
                 });
             });
         }
