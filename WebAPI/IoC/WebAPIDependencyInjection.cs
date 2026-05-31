@@ -79,7 +79,7 @@ namespace WebAPI.IoC
             {
                 options.AddPolicy("CommercialInventoryCors", builder =>
                 {
-                    builder.WithOrigins("http://localhost:8000")
+                    builder.WithOrigins("http://localhost:3000")
                            .WithMethods("GET", "POST", "PUT", "DELETE")
                            .WithHeaders("Content-Type", "Authorization");
                 });
