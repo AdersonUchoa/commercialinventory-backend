@@ -6,10 +6,13 @@ COPY ["WebAPI/WebAPI.csproj", "WebAPI/"]
 COPY ["Application/Application.csproj", "Application/"]
 COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
+COPY ["Tests/Tests.csproj", "Tests/"]
 
-RUN dotnet restore "WebAPI/WebAPI.csproj"
+RUN dotnet restore "CommercialInventory.sln"
 
 COPY . ./
+
+RUN dotnet test "Tests/Tests.csproj" -c Release --no-restore
 
 RUN dotnet publish "WebAPI/WebAPI.csproj" -c Release -o /app/out
 

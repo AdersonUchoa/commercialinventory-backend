@@ -11,7 +11,7 @@ namespace Application.Requests.Produto
         public string? Descricao { get; set; }
 
         [Required(ErrorMessage = "O preço é obrigatório.")]
-        [Range(typeof(decimal), "0", "99999999.99", ErrorMessage = "O preço deve ser entre 0 e 99.999.999,99.")]
+        [Range(0.0, 99999999.99, ErrorMessage = "O preço deve ser entre 0 e 99.999.999,99.")]
         public decimal Preco { get; set; }
 
         public int CategoriaId { get; set; }
