@@ -12,7 +12,7 @@ using System.Net;
 
 namespace Application.Services
 {
-    public class CategoriaService : ICategoriaService
+    public sealed class CategoriaService : ICategoriaService
     {
         private readonly ICategoriaRepository _categoriaRepository;
         private readonly IUnitOfWork _unitOfWork;

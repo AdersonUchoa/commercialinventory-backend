@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database.Repositories
 {
-    public class CategoriaRepository : ICategoriaRepository
+    public sealed class CategoriaRepository : ICategoriaRepository
     {
         private readonly CommercialInventoryDbContext _context;
         private readonly DbSet<Categoria> _categorias;
